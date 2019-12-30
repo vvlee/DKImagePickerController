@@ -277,11 +277,11 @@ open class DKAssetGroupDetailVC: UIViewController,
             , let asset = cell.asset else {
             return
         }
-
-        if !imagePickerController.contains(asset: asset) {
-            imagePickerController.select(asset: asset)
-            updateTitleView()
-        }
+        showGallery(from: cell)
+//        if !imagePickerController.contains(asset: asset) {
+//            imagePickerController.select(asset: asset)
+//            updateTitleView()
+//        }
     }
 
     public func deselectAsset(atIndex indexPath: IndexPath) {
@@ -572,11 +572,12 @@ open class DKAssetGroupDetailVC: UIViewController,
             }
         }
         
-        cell.longPressBlock = { [weak self, weak cell] in
-            guard let strongSelf = self, let strongCell = cell else { return }
-            
-            strongSelf.showGallery(from: strongCell)
-        }
+        // 取消长按进入预览
+//        cell.longPressBlock = { [weak self, weak cell] in
+//            guard let strongSelf = self, let strongCell = cell else { return }
+//
+//            strongSelf.showGallery(from: strongCell)
+//        }
     }
 
     // MARK: - UICollectionViewDelegate, UICollectionViewDataSource methods
