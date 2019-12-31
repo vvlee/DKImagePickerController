@@ -51,6 +51,8 @@ open class DKAssetGroupDetailBaseCell: UICollectionViewCell, DKAssetGroupCellIte
         }
     }
     
+    open var showCheckLabel: Bool = false
+    
     // MARK: - Private methods
     
     @objc func longPress(gestureRecognizer: UIGestureRecognizer) {

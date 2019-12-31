@@ -277,11 +277,11 @@ open class DKAssetGroupDetailVC: UIViewController,
             , let asset = cell.asset else {
             return
         }
-        showGallery(from: cell)
-//        if !imagePickerController.contains(asset: asset) {
-//            imagePickerController.select(asset: asset)
-//            updateTitleView()
-//        }
+        
+        if !imagePickerController.contains(asset: asset) {
+            imagePickerController.select(asset: asset)
+            updateTitleView()
+        }
     }
 
     public func deselectAsset(atIndex indexPath: IndexPath) {
@@ -487,6 +487,22 @@ open class DKAssetGroupDetailVC: UIViewController,
     }
 
     // MARK: - Gallery
+    
+    func showGallery(from indexPath: IndexPath) {
+        self.lastIndexPath = indexPath
+        
+        guard let imagePickerController = imagePickerController else {
+            assertionFailure("Expect imagePickerController")
+            return
+        }
+        
+        guard let cell = collectionView?.cellForItem(at: indexPath) as? DKAssetGroupDetailBaseCell
+            , let asset = cell.asset else {
+            return
+        }
+        
+        showGallery(from: cell)
+    }
 
     func showGallery(from cell: DKAssetGroupDetailBaseCell) {
         if let groupId = self.selectedGroupId {
@@ -613,9 +629,11 @@ open class DKAssetGroupDetailVC: UIViewController,
         if let selectedIndex = self.imagePickerController?.index(of: asset) {
             assetCell.isSelected = true
             assetCell.selectedIndex = selectedIndex
+            assetCell.showCheckLabel = true
             self.collectionView?.selectItem(at: indexPath, animated: false, scrollPosition: [])
         } else {
             assetCell.isSelected = false
+            assetCell.showCheckLabel = false
             self.collectionView?.deselectItem(at: indexPath, animated: false)
         }
     }
@@ -639,12 +657,17 @@ open class DKAssetGroupDetailVC: UIViewController,
                 self.imagePickerController?.presentCamera()
             }
         } else {
-            self.selectAsset(atIndex: indexPath)
+            // self.selectAsset(atIndex: indexPath)
+            showGallery(from: indexPath)
         }
     }
 
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        self.deselectAsset(atIndex: indexPath)
+        if isCameraCell(indexPath: indexPath) {
+            deselectAsset(atIndex: indexPath)
+        } else {
+            showGallery(from: indexPath)
+        }
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -762,7 +785,7 @@ open class DKAssetGroupDetailVC: UIViewController,
                     if cell.asset == asset {
                         let selectedIndex = imagePickerController.selectedAssetIdentifiers.count - 1
                         cell.selectedIndex = selectedIndex
-
+                        cell.showCheckLabel = true
                         if !cell.isSelected {
                             collectionView.selectItem(at: indexPathForVisible, animated: true, scrollPosition: [])
                         }
@@ -782,10 +805,12 @@ open class DKAssetGroupDetailVC: UIViewController,
 
         for indexPathForVisible in collectionView.indexPathsForVisibleItems {
             if let cell = (collectionView.cellForItem(at: indexPathForVisible) as? DKAssetGroupDetailBaseCell),
-                let asset = cell.asset, cell.isSelected {
+                let asset = cell.asset {
                 if let selectedIndex = self.imagePickerController?.index(of: asset) {
                     cell.selectedIndex = selectedIndex
-                } else if cell.isSelected {
+                    cell.showCheckLabel = true
+                } else {
+                    cell.showCheckLabel = false
                     collectionView.deselectItem(at: indexPathForVisible, animated: true)
                 }
             }
