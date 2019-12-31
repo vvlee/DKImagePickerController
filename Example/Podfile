@@ -1,10 +1,11 @@
-platform :ios, '8.0'
+platform :ios, '10.0'
 use_frameworks!
 
 inhibit_all_warnings!
 
 target 'DKImagePickerControllerDemo' do
 
+  pod 'DKPhotoGallery', :git => 'https://github.com/vvlee/DKPhotoGallery.git', :tag => '1.0.0'
   pod 'DKImagePickerController', :path => '../'
 
   # Pods for DKImagePickerControllerDemo
