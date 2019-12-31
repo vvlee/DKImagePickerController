@@ -331,7 +331,7 @@ fileprivate class DKGalleryHeaderView: UIView {
         selectBtn.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
         selectBtn.clipsToBounds = true
         selectBtn.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().offset(13)
+            make.top.equalToSuperview().offset(UIApplication.shared.statusBarFrame.height)
             make.trailing.equalToSuperview().offset(-28)
             make.size.equalTo(CGSize(width: 28, height: 28))
         }

@@ -52,6 +52,7 @@ open class DKAssetGroupDetailBaseCell: UICollectionViewCell, DKAssetGroupCellIte
     }
     
     open var showCheckLabel: Bool = false
+    open var showMaskView: Bool = false
     
     // MARK: - Private methods
     
