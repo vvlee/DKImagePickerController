@@ -37,7 +37,9 @@ open class DKPopoverViewController: UIViewController {
         popoverViewController.fromView = fromView
         
         popoverViewController.showInView(detailVC.view)
+        popoverViewController.detailVC = detailVC as? DKAssetGroupDetailVC
         detailVC.addChild(popoverViewController)
+        
         pvc = popoverViewController
     }
     
@@ -68,6 +70,8 @@ open class DKPopoverViewController: UIViewController {
     private var contentViewController: UIViewController!
     private var fromView: UIView!
     private var popoverView: DKPopoverView!
+    
+    weak var detailVC: DKAssetGroupDetailVC?
     
     // MARK: - Observers
     
@@ -111,6 +115,7 @@ open class DKPopoverViewController: UIViewController {
     }
     
     @objc func dismiss() {
+        detailVC?.updateTitleView(false)
         dismiss {
             //
         }
