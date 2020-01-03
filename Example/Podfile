@@ -5,7 +5,7 @@ inhibit_all_warnings!
 
 target 'DKImagePickerControllerDemo' do
 
-  pod 'DKPhotoGallery', :git => 'https://github.com/vvlee/DKPhotoGallery.git', :tag => '1.0.0'
+  pod 'DKPhotoGallery', :git => 'https://github.com/vvlee/DKPhotoGallery.git', :tag => '1.0.2'
   pod 'DKImagePickerController', :path => '../'
 
   # Pods for DKImagePickerControllerDemo

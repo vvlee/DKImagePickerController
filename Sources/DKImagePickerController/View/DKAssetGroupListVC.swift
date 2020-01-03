@@ -8,6 +8,8 @@
 
 import Photos
 
+import SnapKit
+
 let DKImageGroupCellIdentifier = "DKImageGroupCellIdentifier"
 
 @objc public protocol DKAssetGroupCellType {
@@ -16,7 +18,8 @@ let DKImageGroupCellIdentifier = "DKImageGroupCellIdentifier"
 }
 
 class DKAssetGroupCell: UITableViewCell, DKAssetGroupCellType {
-    static var preferredHeight: CGFloat = 70
+    
+    static var preferredHeight: CGFloat = 64
 
     class DKAssetGroupSeparator: UIView {
 
@@ -43,86 +46,83 @@ class DKAssetGroupCell: UITableViewCell, DKAssetGroupCellType {
     lazy var groupNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 13)
+        label.textColor = UIColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
         return label
     }()
 
     lazy var totalCountLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 10)
+        label.font = UIFont.systemFont(ofSize: 13)
         
-        if #available(iOS 13, *) {
-            label.textColor = UIColor.secondaryLabel
-        } else {
-            label.textColor = UIColor.gray
-        }
+        label.textColor = UIColor(red: 0.4, green: 0.4, blue: 0.4, alpha: 1)
         return label
     }()
 
-    var customSelectedBackgroundView: UIView = {
-        let selectedBackgroundView = UIView()
+//    var customSelectedBackgroundView: UIView = {
+//        let selectedBackgroundView = UIView()
 
-        let selectedFlag = UIImageView(image: DKImagePickerControllerResource.blueTickImage())
-        selectedFlag.frame = CGRect(x: selectedBackgroundView.bounds.width - selectedFlag.bounds.width - 20,
-                                    y: (selectedBackgroundView.bounds.width - selectedFlag.bounds.width) / 2,
-                                    width: selectedFlag.bounds.width, height: selectedFlag.bounds.height)
-        selectedFlag.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleBottomMargin]
-        selectedBackgroundView.addSubview(selectedFlag)
+//        let selectedFlag = UIImageView(image: DKImagePickerControllerResource.blueTickImage())
+//        selectedFlag.frame = CGRect(x: selectedBackgroundView.bounds.width - selectedFlag.bounds.width - 20,
+//                                    y: (selectedBackgroundView.bounds.width - selectedFlag.bounds.width) / 2,
+//                                    width: selectedFlag.bounds.width, height: selectedFlag.bounds.height)
+//        selectedFlag.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin, .flexibleBottomMargin]
+//        selectedBackgroundView.addSubview(selectedFlag)
+//        selectedBackgroundView.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
+//        return selectedBackgroundView
+//    }()
 
-        return selectedBackgroundView
-    }()
+//    lazy var customSeparator: DKAssetGroupSeparator = {
+//        let separator = DKAssetGroupSeparator(frame: CGRect(x: 10, y: self.bounds.height - 1, width: self.bounds.width, height: 0.5))
+//
+//        if #available(iOS 13, *) {
+//            separator.backgroundColor = UIColor.systemGray5
+//        } else {
+//            separator.backgroundColor = UIColor.lightGray
+//        }
+//        separator.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
+//        return separator
+//    }()
 
-    lazy var customSeparator: DKAssetGroupSeparator = {
-        let separator = DKAssetGroupSeparator(frame: CGRect(x: 10, y: self.bounds.height - 1, width: self.bounds.width, height: 0.5))
-
-        if #available(iOS 13, *) {
-            separator.backgroundColor = UIColor.systemGray5
-        } else {
-            separator.backgroundColor = UIColor.lightGray
+    override var isSelected: Bool {
+        didSet {
+            if isSelected {
+                self.backgroundColor = UIColor(red: 0.98, green: 0.98, blue: 0.98, alpha: 1)
+            } else {
+                self.backgroundColor = .white
+            }
         }
-        separator.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
-        return separator
-    }()
-
+    }
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        if #available(iOS 13, *) {
-            self.backgroundColor = UIColor.systemGray6
-        }
-        self.selectedBackgroundView = self.customSelectedBackgroundView
+        self.backgroundColor = .white
+//        self.selectedBackgroundView = self.customSelectedBackgroundView
 
         self.contentView.addSubview(self.thumbnailImageView)
         self.contentView.addSubview(self.groupNameLabel)
         self.contentView.addSubview(self.totalCountLabel)
+        
+        thumbnailImageView.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview().offset(20)
+            make.size.equalTo(CGSize(width: 50, height: 50))
+        }
+        
+        groupNameLabel.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(thumbnailImageView.snp.trailing).offset(12)
+        }
+        
+        totalCountLabel.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.leading.equalTo(groupNameLabel.snp.trailing).offset(8)
+        }
 
-        self.addSubview(self.customSeparator)
+//        self.addSubview(self.customSeparator)
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        let imageViewY = CGFloat(10)
-        let imageViewHeight = self.contentView.bounds.height - 2 * imageViewY
-        self.thumbnailImageView.frame = CGRect(x: imageViewY,
-                                               y: imageViewY,
-                                               width: imageViewHeight,
-                                               height: imageViewHeight)
-
-        self.groupNameLabel.frame = CGRect(
-            x: self.thumbnailImageView.frame.maxX + 10,
-            y: self.thumbnailImageView.frame.minY + 5,
-            width: 200,
-            height: 20)
-
-        self.totalCountLabel.frame = CGRect(
-            x: self.groupNameLabel.frame.minX,
-            y: self.thumbnailImageView.frame.maxY - 20,
-            width: 200,
-            height: 20)
     }
 
     func configure(with assetGroup: DKAssetGroup, tag: Int, dataManager: DKImageGroupDataManager, imageRequestOptions: PHImageRequestOptions) {

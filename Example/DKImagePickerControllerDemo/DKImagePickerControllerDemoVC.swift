@@ -28,19 +28,19 @@ class DKImagePickerControllerDemoVC: UITableViewController {
             
         case "Pick Any":
             let pickerController = DKImagePickerController()
-            
+            pickerController.modalPresentationStyle = .fullScreen
             destination.pickerController = pickerController
             
         case "Pick Photos Only":
             let pickerController = DKImagePickerController()
             pickerController.assetType = .allPhotos
-            
+            pickerController.modalPresentationStyle = .fullScreen
             destination.pickerController = pickerController
             
         case "Pick Videos Only":
             let pickerController = DKImagePickerController()
             pickerController.assetType = .allVideos
-            
+            pickerController.modalPresentationStyle = .fullScreen
             destination.pickerController = pickerController
             
         case "Pick Any (Only Photos Or Videos)":

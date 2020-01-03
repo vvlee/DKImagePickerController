@@ -79,6 +79,8 @@ public protocol DKImagePickerControllerUIDelegate {
       Provide a custom button to be used as the titleView for imagePickerController's navigationItem.
     */
     func imagePickerControllerSelectGroupButton(_ imagePickerController: DKImagePickerController, selectedGroup: DKAssetGroup) -> UIButton
+    
+    func imagePickerControllerCloseSelectGroupButton(_ imagePickerController: DKImagePickerController, selectedGroup: DKAssetGroup) -> UIButton
 
     /**
       Specify how asset group list view controller should be presented, default is .popover
@@ -269,6 +271,15 @@ open class DKImagePickerControllerBaseUIDelegate: NSObject, DKImagePickerControl
     }
 
     open func imagePickerControllerSelectGroupButton(_ imagePickerController: DKImagePickerController, selectedGroup: DKAssetGroup) -> UIButton {
+        let button = self.createSelectGroupButtonIfNeeded()
+        let groupsCount = self.imagePickerController.groupDataManager.groupIds?.count ?? 0
+        button.setTitle((selectedGroup.groupName ?? "") + (groupsCount > 1 ? "  \u{25b4}" : "" ), for: .normal)
+        button.sizeToFit()
+        button.isEnabled = groupsCount > 1
+        return button
+    }
+    
+    open func imagePickerControllerCloseSelectGroupButton(_ imagePickerController: DKImagePickerController, selectedGroup: DKAssetGroup) -> UIButton {
         let button = self.createSelectGroupButtonIfNeeded()
         let groupsCount = self.imagePickerController.groupDataManager.groupIds?.count ?? 0
         button.setTitle((selectedGroup.groupName ?? "") + (groupsCount > 1 ? "  \u{25be}" : "" ), for: .normal)

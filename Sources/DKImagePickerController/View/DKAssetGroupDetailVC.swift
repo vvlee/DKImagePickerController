@@ -206,7 +206,7 @@ open class DKAssetGroupDetailVC: UIViewController,
         self.collectionView?.reloadData()
     }
 
-	open func updateTitleView() {
+    open func updateTitleView(_ isOpen: Bool = false) {
         guard let selectedGroupId = self.selectedGroupId else { return }
         guard let imagePickerController = imagePickerController else {
             assertionFailure("Expect imagePickerController")
@@ -218,7 +218,12 @@ open class DKAssetGroupDetailVC: UIViewController,
         }
         self.title = group.groupName
 
-        let selectGroupButton = imagePickerController.UIDelegate.imagePickerControllerSelectGroupButton(imagePickerController, selectedGroup: group)
+        let selectGroupButton: UIButton
+        if let _ = DKPopoverViewController.pvc, isOpen {
+            selectGroupButton = imagePickerController.UIDelegate.imagePickerControllerSelectGroupButton(imagePickerController, selectedGroup: group)
+        } else {
+            selectGroupButton = imagePickerController.UIDelegate.imagePickerControllerCloseSelectGroupButton(imagePickerController, selectedGroup: group)
+        }
         selectGroupButton.addTarget(self, action: #selector(DKAssetGroupDetailVC.showGroupSelector), for: .touchUpInside)
         self.selectGroupButton = selectGroupButton
 
@@ -238,7 +243,13 @@ open class DKAssetGroupDetailVC: UIViewController,
         switch imagePickerController.UIDelegate.imagePickerControllerGroupListPresentationStyle() {
         case .popover:
             if let button = self.selectGroupButton {
-                DKPopoverViewController.popoverViewController(groupListVC, fromView: button)
+                if let pvc = DKPopoverViewController.pvc {
+                    DKPopoverViewController.dismissPopoverViewController()
+                    updateTitleView(false)
+                } else {
+                    DKPopoverViewController.popoverViewController(groupListVC, fromView: button, detailVC: self)
+                    updateTitleView(true)
+                }
             }
         case .presented:
             let navigationController = DKUINavigationController()
