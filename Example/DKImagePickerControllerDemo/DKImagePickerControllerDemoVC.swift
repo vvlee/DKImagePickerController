@@ -77,6 +77,7 @@ class DKImagePickerControllerDemoVC: UITableViewController {
             let pickerController = DKImagePickerController()
             pickerController.singleSelect = true
             pickerController.autoCloseOnSingleSelect = true
+            pickerController.showPhotoEditWhenDone = true
             
             destination.pickerController = pickerController
             

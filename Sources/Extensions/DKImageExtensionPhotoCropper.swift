@@ -13,6 +13,19 @@ import Foundation
 import CropViewController
 #endif
 
+enum PhotoCropperType {
+    case `default`, circular
+    
+    var type: CropViewCroppingStyle {
+        switch self {
+        case .default:
+            return .default
+        case .circular:
+            return .circular
+        }
+    }
+}
+
 open class DKImageExtensionPhotoCropper: DKImageBaseExtension {
     
     open  weak var imageEditor: UIViewController?
@@ -24,13 +37,17 @@ open class DKImageExtensionPhotoCropper: DKImageBaseExtension {
     }
         
     override open func perform(with extraInfo: [AnyHashable: Any]) {
-        guard let sourceImage = extraInfo["image"] as? UIImage
-            , let didFinishEditing = extraInfo["didFinishEditing"] as? ((UIImage, [AnyHashable : Any]?) -> Void) else { return }
+        guard
+            let sourceImage = extraInfo["image"] as? UIImage,
+            let didFinishEditing = extraInfo["didFinishEditing"] as? ((UIImage, [AnyHashable : Any]?) -> Void)
+            else { return }
         
         self.metadata = extraInfo["metadata"] as? [AnyHashable : Any]
         self.didFinishEditing = didFinishEditing
         
-        let imageCropper = CropViewController(image: sourceImage)
+        let type: PhotoCropperType = extraInfo["type"] as? PhotoCropperType ?? .default
+        
+        let imageCropper = CropViewController(croppingStyle: type.type, image: sourceImage)
         imageCropper.onDidCropToRect = { [weak self] image, _, _ in
             guard let strongSelf = self else { return }
             
@@ -46,6 +63,9 @@ open class DKImageExtensionPhotoCropper: DKImageBaseExtension {
             }
         }
         imageCropper.modalPresentationStyle = .fullScreen
+        imageCropper.doneButtonTitle = "确定"
+        imageCropper.cancelButtonTitle = "取消"
+        imageCropper.aspectRatioPickerButtonHidden = true
         
         self.imageEditor = imageCropper
         

@@ -295,8 +295,38 @@ open class DKImagePickerController: DKUINavigationController, DKImageBaseManager
         })
     }
     
+    public var showPhotoEditWhenDone: Bool = false
     private var exportRequestID = DKImageAssetExportInvalidRequestID
     @objc open func done() {
+        guard
+            showPhotoEditWhenDone,
+            extensionController.isExtensionTypeAvailable(.photoEditor),
+            let asset = selectedAssets.first
+            else { complete(); return }
+        
+        // 跳转照片编辑
+        asset.fetchOriginalImage { [weak self] (image, info) in
+            // 完成编辑
+            let didFinishEditing: ((UIImage, [AnyHashable: Any]?) -> Void) = { (image, metadata) in
+                guard let self = self else { return }
+                self.cancelCurrentExportRequestIfNeeded()
+                self.exportStatus = .none
+                self.didSelectAssets?([DKAsset(image: image)])
+                self.presentingViewController?.dismiss(animated: true, completion: nil)
+            }
+                                
+            var extraInfo: [AnyHashable: Any] = [
+                "image": image,
+                "didFinishEditing": didFinishEditing,
+                "type": PhotoCropperType.circular
+            ]
+                    
+            self?.extensionController.perform(extensionType: .photoEditor, with: extraInfo)
+        }
+    }
+    
+    // old done() function code
+    fileprivate func complete() {
         self.cancelCurrentExportRequestIfNeeded()
         
         let completeBlock: ([DKAsset]) -> Void = { assets in

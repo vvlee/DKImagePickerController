@@ -319,9 +319,10 @@ fileprivate class DKGalleryFooterView: UIView {
     }
     
     @objc func doneAction(_ btn: UIButton) {
-        gallery?.dismissGallery()
         if let ext = gallery?.galleryDelegate as? DKImageExtensionGallery {
             ext.context.imagePickerController?.done()
+        } else {
+            gallery?.dismissGallery()
         }
     }
 }
