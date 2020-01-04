@@ -193,9 +193,13 @@ open class DKPhotoGalleryController: DKPhotoGallery {
         
         galleryFooterView.gallery = self
         v.addSubview(galleryFooterView)
+        var bottomOffset: CGFloat = 0
+        if #available(iOS 11.0, *) {
+            bottomOffset = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        }
         galleryFooterView.snp.makeConstraints { (make) in
             make.leading.bottom.trailing.equalToSuperview()
-            make.height.equalTo(100)
+            make.height.equalTo(68 + bottomOffset)
         }
         
         v.addSubview(galleryHeaderView)
@@ -273,8 +277,13 @@ fileprivate class DKGalleryFooterView: UIView {
     }
     
     func setup() {
-        let isIPhoneX: Bool = UIApplication.shared.statusBarFrame.height > 20
-        let xOffset: CGFloat = isIPhoneX ? 20 : 0
+        
+        backgroundColor = .black
+        
+        var bottomOffset: CGFloat = 0
+        if #available(iOS 11.0, *) {
+            bottomOffset = UIApplication.shared.keyWindow?.safeAreaInsets.bottom ?? 0
+        }
         
         backBtn.setTitle("返回", for: .normal)
         backBtn.setTitleColor(.white, for: .normal)
@@ -283,8 +292,8 @@ fileprivate class DKGalleryFooterView: UIView {
         backBtn.addTarget(self, action: #selector(backAction(_:)), for: .touchUpInside)
         addSubview(backBtn)
         backBtn.snp.makeConstraints { (make) in
-            make.bottom.equalToSuperview().offset(-25 - xOffset)
             make.leading.equalToSuperview().offset(70)
+            make.centerY.equalToSuperview().offset(-bottomOffset/2)
             make.size.equalTo(CGSize(width: 48, height: 32))
         }
         
